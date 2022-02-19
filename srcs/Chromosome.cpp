@@ -17,10 +17,12 @@ Chromosome::Chromosome(int _length, std::string _gene_encode_method)
 	this->geneCode = generaton_fixed_length(_length);				//TODO: generation method??
 }
 
-// Chromosome::~Chromosome()
-// {
-// 	delete[] geneCode;
-// }
+Chromosome::~Chromosome()
+{
+	// free(this->geneCode);
+	// geneCode = NULL;
+	//delete[] geneCode;
+}
 
 // Calculate params
 int Chromosome::getGeneMin(std::string gene_method)
@@ -28,7 +30,7 @@ int Chromosome::getGeneMin(std::string gene_method)
 	if (!gene_method.compare("quaternary"))
 		return 0;
 	if (!gene_method.compare("int"))
-		return 9;
+		return 0;
 	return 0;
 }
 
@@ -46,20 +48,21 @@ int Chromosome::getGeneMax(std::string gene_method)
 char *Chromosome::generaton_fixed_length(int _length)
 {
 	char *new_chromosome = new char[_length];
+	char a;
 	for(int i=0; i < _length; i++){
 		if (!this->gene_encode_method.compare("int"))
-			new_chromosome[i] = int_random(gene_min, gene_max);
+			new_chromosome[i] = this->random(gene_min, gene_max);
 	}
 	return new_chromosome;
 }
 
 char *Chromosome::generaton_full_random()
 {
-	this->length = int_random(0, 1000);								//TODO: 1000 -> limited range??
+	this->length = this->random(0, 1000);								//TODO: 1000 -> limited range??
 	char *new_geneCode = new char[this->length];
 	for (int i=0; i < this->length; i++){
 		if (!this->gene_encode_method.compare("int"))
-			new_geneCode[i] = int_random(gene_min, gene_max);
+			new_geneCode[i] = (char)this->random(gene_min, gene_max);
 	}
 	return new_geneCode;
 }
@@ -82,9 +85,8 @@ void Chromosome::mutation_simple(double mutation_rate)
 	// get random value with mutation rate
 	int percent_int[2] = {(int)percent[0]-(int)percent[1], (int)percent[1]};
 	for(int i=0; i < this->length; i++){
-		if (roulette_wheel(percent_int, 2)){
-			this->geneCode[i] = int_random(this->gene_min, this->gene_max);
-		}
+		if (roulette_wheel(percent_int, 2))
+			this->geneCode[i] = this->random((char)this->gene_min, (char)this->gene_max);
 	}
 }
 
@@ -94,6 +96,40 @@ void Chromosome::showGeneCode()
 {
 	for(int i=0; i < length; i++){
 		std::cout << (int)geneCode[i] << ",";
-		//std::cout << "length: " << this->length << "    ";
 	}
+	std::cout << "length: " << this->length << "    ";
+}
+
+
+//  Utils
+char Chromosome::random(char _min, char _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<char> dis(_min, _max);
+    return dis(gen);
+}
+
+int Chromosome::random(int _min, int _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dis(_min, _max);
+    return dis(gen);
+}
+
+float Chromosome::random(float _min, float _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(_min, _max);
+    return dis(gen);
+}
+
+double Chromosome::random(double _min, double _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(_min, _max);
+    return dis(gen);
 }

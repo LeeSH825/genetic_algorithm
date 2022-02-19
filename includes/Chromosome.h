@@ -23,6 +23,13 @@ class Chromosome
 		char *generaton_fixed_length(int _length);
 		char *generaton_full_random();
 
+		//utils
+		char random(char _min, char _max);
+		int random(int _min, int _max);
+		float random(float _min, float _max);
+		double random(double _min, double _max);
+
+
 
 	public:
 		//    Initializer
@@ -30,12 +37,13 @@ class Chromosome
 		Chromosome(std::string _gene_encode_method);
 		Chromosome(int _length, std::string _gene_encode_method);
 
-		//~Chromosome();
+		~Chromosome();
 
 		//    set internal variables
 		void setLength(int _length){this->length = _length;};
 		void setGeneCode(char *_geneCode){this->geneCode = _geneCode;};
 		void setGeneCode(){this->geneCode = this->generaton_fixed_length(this->length);};					//TODO: if this thing blow away?
+		void setEncode(std::string _encode){this->gene_encode_method = _encode; this->gene_min = this->getGeneMin(_encode); this->gene_max = this->getGeneMax(_encode);};
 
 		//    export internal variables
 		char *getGeneCode(){return this->geneCode;};

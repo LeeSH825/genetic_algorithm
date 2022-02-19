@@ -13,6 +13,7 @@ class Gene_Pod
 		int num_population;
 		int num_population_next;
 		double mutation_rate;
+		double cross_rate;
 		std::string gene_encode_method;
 		std::string fitness_method;
 		//std::ofstream save_file;
@@ -30,6 +31,7 @@ class Gene_Pod
 		Chromosome *cross_simple(Chromosome parent1, Chromosome parent2);
 		Chromosome *cross_simple(Chromosome parent1, Chromosome parent2, int _lengrh);
 		Chromosome *cross_simple_percent(Chromosome parent1, Chromosome parent2);
+		Chromosome *cross_simple_percent(Chromosome parent1, Chromosome parent2, int _length);
 
 		//   selection
 		Chromosome selRoulette_Gene();
@@ -38,13 +40,19 @@ class Gene_Pod
 		double fitness_sum(Chromosome individual);
 		double fitness_sum2Value(Chromosome individual, int value);
 
+		//utils
+		char random(char _min, char _max);
+		int random(int _min, int _max);
+		float random(float _min, float _max);
+		double random(double _min, double _max);
+
 
 	public:
 		// simulator external function
 		Gene_Pod(){};
 		Gene_Pod(int generation_number, int population_size, double _mutation_rate, std::string _gene_encode_method, std::string _fitness_method);
 
-		//~Gene_Pod();
+		~Gene_Pod() {};
 
 		//Gene_Pod(int generation_number, int popuplation_size, double _mutation_rate, std::ofstream save_path);
 		void init_population();
@@ -55,6 +63,7 @@ class Gene_Pod
 		Gene_Pod *succeeding_generation(Chromosome **next_gen);
 
 		void report();
+		void show_chromosomes();
 		void report_record();
 
 

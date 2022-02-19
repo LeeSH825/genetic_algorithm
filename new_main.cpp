@@ -19,26 +19,26 @@ int main(int argc, char *argv[])
 	const auto size_parsed = args.get<int>("size");
 	if (size_parsed){
 		size = *size_parsed;
-		cout << "size: " << size << endl;
+		cout << "# of Chromosome's size: " << size << endl;
 	}
 	else
-		cout << "size: " << size << "(default)" << endl;
+		cout << "# of Chromosome's size: " << size << "(default)" << endl;
 
 	const auto population_parsed = args.get<int>("population");
 	if (population_parsed){
 		population = *population_parsed;
-		cout << "num_parent: " << population << endl;
+		cout << "# of population: " << population << endl;
 	}
 	else
-		cout << "num_parent: " << population << "(defalut)" << endl;
+		cout << "# of population: " << population << "(defalut)" << endl;
 
 	const auto generation_parsed = args.get<int>("generation");
 	if (generation_parsed){
 		generation = *generation_parsed;
-		cout << "genertion_num: " << generation << endl;
+		cout << "# of generation: " << generation << endl;
 	}
 	else 
-		cout << "genertion_num: " << generation << "(default)" << endl;
+		cout << "# of generation: " << generation << "(default)" << endl;
 
 	const auto mutation_rate_parsed = args.get<double>("mutation_rate");
 	if (mutation_rate_parsed){
@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
 	Gene_Pod *pod = new Gene_Pod [generation];
 	pod[0] = Gene_Pod(0, population, mutation_rate, gene_encode_method, fitness_method);
 	pod[0].init_population(size);
+	//pod[0].show_chromosomes();
 	// pod[0].report();
 	//pod[0].calc_fitness("sum2Value");
 	// pod[0].report();

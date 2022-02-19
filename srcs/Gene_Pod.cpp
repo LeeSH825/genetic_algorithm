@@ -133,11 +133,12 @@ Chromosome Gene_Pod::selRoulette_Gene()
 
 Chromosome *Gene_Pod::cross_simple(Chromosome parent1, Chromosome parent2)
 {
-	int crossPoint1 = int_random(0, parent1.getLength());
-	int crossPoint2 = int_random(0, parent2.getLength());
+	int crossPoint1 = this->random(0, parent1.getLength());
+	int crossPoint2 = this->random(0, parent2.getLength());
 	Chromosome *child = new Chromosome;
 	int child_length = crossPoint1+(parent2.getLength()-crossPoint2);
 	child->setLength(child_length);
+	child->setEncode(this->gene_encode_method);
 	char *geneCode_child = new char [child_length];
 	
 	for (int i=0; i < child_length; i++){
@@ -153,27 +154,106 @@ Chromosome *Gene_Pod::cross_simple(Chromosome parent1, Chromosome parent2)
 
 Chromosome *Gene_Pod::cross_simple(Chromosome parent1, Chromosome parent2, int _length)
 {
-	int crossPoint1 = int_random(0, parent1.getLength());
-	int crossPoint2 = int_random(0, parent2.getLength());
+	int crossPoint1 = this->random(0, parent1.getLength());
+	int crossPoint2 = this->random(0, parent2.getLength());
 	Chromosome *child = new Chromosome;
-	int child_length = crossPoint1+(parent2.getLength()-crossPoint2);
-	child->setLength(child_length);
-	char *geneCode_child = new char [child_length];
+	child->setLength(_length);
+	child->setEncode(this->gene_encode_method);
+	char *geneCode_child = new char [_length];
 	
-	for (int i=0; i < child_length; i++){
-		if (i < _length && crossPoint2 < parent2.getLength()){
-			if (i < crossPoint1)
-				geneCode_child[i] = parent1.getGeneCode()[i];
-			else
-				geneCode_child[i] = parent2.getGeneCode()[crossPoint2++];
+	for (int i=0; i < _length; i++){
+		if (i < crossPoint1){
+			geneCode_child[i] = parent1.getGeneCode()[i];
+		}
+		else{
+			geneCode_child[i] = parent2.getGeneCode()[crossPoint2++];
 		}
 	}
-
 	child->setGeneCode(geneCode_child);
 
 	return (child);
 }
 
+Chromosome *Gene_Pod::cross_simple_percent(Chromosome parent1, Chromosome parent2)
+{
+	int crossPoint1 = this->random(0, parent1.getLength());
+	int crossPoint2 = this->random(0, parent2.getLength());
+	Chromosome *child = new Chromosome;
+
+	int percent[2] = {8,2};
+	if (roulette_wheel(percent, 2)){
+		int child_length = crossPoint1+(parent2.getLength()-crossPoint2);
+		child->setLength(child_length);
+		child->setEncode(this->gene_encode_method);
+		char *geneCode_child = new char [child_length];
+		for (int i=0; i < child_length; i++){
+			if (i < crossPoint1)
+				geneCode_child[i] = parent1.getGeneCode()[i];
+			else
+				geneCode_child[i] = parent2.getGeneCode()[crossPoint2++];
+		}
+		child->setGeneCode(geneCode_child);
+	}
+	else{
+		if (this->random(0,1)){
+			child->setLength(parent1.getLength());
+			child->setEncode(this->gene_encode_method);
+			char *geneCode_child = new char [parent1.getLength()];
+			for (int i=0; i < parent1.getLength(); i++)
+				geneCode_child[i] = parent1.getGeneCode()[i];
+			child->setGeneCode(geneCode_child);
+		}
+		else{
+			child->setLength(parent2.getLength());
+			child->setEncode(this->gene_encode_method);
+			char *geneCode_child = new char [parent2.getLength()];
+			for (int i=0; i < parent2.getLength(); i++)
+				geneCode_child[i] = parent2.getGeneCode()[i];
+			child->setGeneCode(geneCode_child);
+		}
+	}
+	return (child);
+}
+
+Chromosome *Gene_Pod::cross_simple_percent(Chromosome parent1, Chromosome parent2, int _length)
+{
+	int crossPoint1 = this->random(0, parent1.getLength());
+	int crossPoint2 = this->random(0, parent2.getLength());
+	Chromosome *child = new Chromosome;
+
+	int percent[2] = {8,2};
+	if (roulette_wheel(percent, 2)){
+		child->setLength(_length);
+		child->setEncode(this->gene_encode_method);
+		char *geneCode_child = new char [_length];
+		for (int i=0; i < _length; i++){
+			if (i < crossPoint1)
+				geneCode_child[i] = parent1.getGeneCode()[i];
+			else
+				geneCode_child[i] = parent2.getGeneCode()[crossPoint2++];
+		}
+		child->setGeneCode(geneCode_child);
+	}
+	else{
+		if (this->random(0,1)){
+			child->setLength(parent1.getLength());
+			child->setEncode(this->gene_encode_method);
+			char *geneCode_child = new char [parent1.getLength()];
+			for (int i=0; i < parent1.getLength(); i++)
+				geneCode_child[i] = parent1.getGeneCode()[i];
+			child->setGeneCode(geneCode_child);
+		}
+		else{
+			child->setLength(parent2.getLength());
+			child->setEncode(this->gene_encode_method);
+			char *geneCode_child = new char [parent2.getLength()];
+			for (int i=0; i < parent2.getLength(); i++)
+				geneCode_child[i] = parent2.getGeneCode()[i];
+			child->setGeneCode(geneCode_child);
+		}
+	}
+	return (child);
+}
 
 Chromosome **Gene_Pod::recombination_whole()									//TODO: about next generation's population?
 {
@@ -181,7 +261,9 @@ Chromosome **Gene_Pod::recombination_whole()									//TODO: about next generati
 	Chromosome **gene_next_pool = new Chromosome *[this->num_population_next];
 	//Chromosome *individual_next_pool = new Chromosome [this->num_population];
 	for(int i=0; i < this->num_population_next; i++){
-		gene_next_pool[i] = cross_simple(selRoulette_Gene(), selRoulette_Gene(), 10);
+		Chromosome parent1 = this->selRoulette_Gene();
+		Chromosome parent2 = this->selRoulette_Gene();
+		gene_next_pool[i] = this->cross_simple_percent(parent1, parent2, 10);
 		gene_next_pool[i]->mutation_simple(this->mutation_rate);
 	}
 	
@@ -206,4 +288,47 @@ void Gene_Pod::report()
 	gene_pool[this->best_Chromosome_idx()]->showGeneCode();
 	std::cout << " with fitness: " << fitness[this->best_Chromosome_idx()];
 	std::cout << std::endl << std::endl;
+}
+
+void Gene_Pod::show_chromosomes()
+{
+	for (int i=0; i < this->num_population; i++)
+	{
+		this->gene_pool[i]->showGeneCode();
+		std::cout << std::endl;
+	}
+}
+
+
+//  Utils
+char Gene_Pod::random(char _min, char _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<char> dis(_min, _max);
+    return dis(gen);
+}
+
+int Gene_Pod::random(int _min, int _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dis(_min, _max);
+    return dis(gen);
+}
+
+float Gene_Pod::random(float _min, float _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(_min, _max);
+    return dis(gen);
+}
+
+double Gene_Pod::random(double _min, double _max)
+{
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(_min, _max);
+    return dis(gen);
 }
