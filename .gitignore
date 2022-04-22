@@ -6,3 +6,9 @@
 /aa
 /new
 /test
+/build/CMakeCache.txt
+/build/cmake_install.cmake
+/build/Makefile
+/build/CMakeFiles/
+/build/output/
+/rapidjson-1.1.0/
